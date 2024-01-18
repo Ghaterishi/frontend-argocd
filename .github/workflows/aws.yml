@@ -1,61 +1,63 @@
-name: ECS Deployment
+name: Deploy to Amazon ECS
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "master" ]
 
 env:
-  AWS_REGION: us-east-1
-  AWS_ACCOUNT_ID: 581628381182
-  ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster
-  ECS_SERVICE_NAME: sneaky-fit-frontend-service
-  ECR_REPOSITORY: sneaky-fit-frontend
-  ECS_TASK_DEF_NAME: sneaky-fit-frontend-td
+  AWS_REGION: us-east-1                       # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: sneaky-fit-frontend               # set this to your Amazon ECR repository name
+  ECS_SERVICE: sneaky-fit-frontend-service              
+  ECS_CLUSTER: sneaky-fit-frontend-cluster                    # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: sneaky-fit-frontend-td       # set this to the path to your Amazon ECS task definition                                            # file, e.g. .aws/task-definition.json                                               # containerDefinitions section of your task definition
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-deploy:
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
-
-    outputs:
-      images: ${{ steps.build-image.outputs.images }}
+    environment: production
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Fetch ECS Task Definition
-        run: |
+    - name: Fetch ECS Task Definition
+      run: |
           aws ecs describe-task-definition \
             --task-definition ${{ env.ECS_TASK_DEF_NAME }} \
             --query 'taskDefinition' \
             --output json > task-def.json
 
-      - name: Update ECS Task Definition
-        id: update-task-def
-        run: |
+    - name: Update ECS Task Definition
+      id: update-task-def
+      run: |
           task_def_arn=$(aws ecs register-task-definition \
             --family ${{ env.ECS_TASK_DEF_NAME }} \
             --container-definitions "$(cat task-def.json)" \
@@ -64,8 +66,8 @@ jobs:
           echo "Task Definition ARN: $task_def_arn"
           echo "::set-output name=task_def_arn::$task_def_arn"
           
-      - name: Deploy to ECS Service
-        run: |
+    - name: Deploy to ECS Service
+      run: |
           ecs_service_name=${{ env.ECS_SERVICE_NAME }}
           ecs_cluster_name=${{ env.ECS_CLUSTER_NAME }}
           task_def_arn=${{ steps.update-task-def.outputs.task_def_arn }}
