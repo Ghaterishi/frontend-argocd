@@ -7,6 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 581628381182
   ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster
   ECS_SERVICE_NAME: sneaky-fit-frontend-service
   ECR_REPO_NAME: sneaky-fit-frontend
