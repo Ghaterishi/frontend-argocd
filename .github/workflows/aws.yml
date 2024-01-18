@@ -10,7 +10,7 @@ env:
   AWS_ACCOUNT_ID: 581628381182
   ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster
   ECS_SERVICE_NAME: sneaky-fit-frontend-service
-  ECR_REPO_NAME: sneaky-fit-frontend
+  ECR_REPOSITORY: sneaky-fit-frontend
   ECS_TASK_DEF_NAME: sneaky-fit-frontend-td
 jobs:
   build-and-deploy:
@@ -52,7 +52,7 @@ jobs:
         id: update-task-def
         run: |
           task_def_arn=$(aws ecs register-task-definition \
-            --family your-ecs-task-family \
+            --family ${{ env.ECS_TASK_DEF_NAME }} \
             --container-definitions "$(cat task-def.json)" \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
