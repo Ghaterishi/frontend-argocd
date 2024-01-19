@@ -60,7 +60,7 @@
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-def.json
-        container-name: sneky-fit
+        container-name: sneaky-fit
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
