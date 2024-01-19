@@ -51,7 +51,7 @@ function LoginUser() {
 
   return (
     <div>
-      <h1 style={{ textAlign: 'center', margin: 10 }}>Welcome To CloudZenia!</h1>
+      <h1 style={{ textAlign: 'center', margin: 10 }}>Welcome To sneaky-fit shoes store!</h1>
 
       <div className='row'>
         <div className='col'></div>
