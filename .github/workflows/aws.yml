@@ -66,13 +66,19 @@ jobs:
     - name: Update ECS Task Definition
       id: update-task-def
       run: |
-          task_def_arn=$(aws ecs register-task-definition \
-            --family ${{ env.ECS_TASK_DEF_NAME }} \
-            --container-definitions "$(cat task-def.json)" \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text)
-          echo "Task Definition ARN: $task_def_arn"
-          echo "::set-output name=task_def_arn::$task_def_arn"
+          # Read the task definition JSON and correct CPU and Memory values
+          task_def_json=$(cat task-def.json)
+          task_def_json_fixed=$(echo "$task_def_json" | jq '.containerDefinitions[0].cpu = 256 | .containerDefinitions[0].memory = 512')
+
+           # Register the task definition with corrected values
+           task_def_arn=$(aws ecs register-task-definition \
+          --family ${{ env.ECS_TASK_DEF_NAME }} \
+          --container-definitions "$task_def_json_fixed" \
+          --query 'taskDefinition.taskDefinitionArn' \
+          --output text)
+           echo "Task Definition ARN: $task_def_arn"
+           echo "::set-output name=task_def_arn::$task_def_arn"
+
           
     - name: Deploy to ECS Service
       run: |
