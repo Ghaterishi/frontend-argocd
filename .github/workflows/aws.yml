@@ -53,6 +53,7 @@ jobs:
             --task-definition $ECS_TASK_DEF_NAME \
             --query 'taskDefinition' \
             --output json > task-def.json
+            sudo apt-get install jq
              # Correct the CPU and Memory values in the task definition JSON
              jq '.containerDefinitions[0].cpu = 256 | .containerDefinitions[0].memory = 512' task-def.json > corrected-task-def.json
              # Replace the original file with the corrected one
@@ -66,18 +67,24 @@ jobs:
     - name: Update ECS Task Definition
       id: update-task-def
       run: |
-          # Read the task definition JSON and correct CPU and Memory values
-          task_def_json=$(cat task-def.json)
-          task_def_json_fixed=$(echo "$task_def_json" | jq '.containerDefinitions[0].cpu = 256 | .containerDefinitions[0].memory = 512')
+       # Read the task definition JSON and extract the correct CPU and Memory values
+       task_def_json=$(cat task-def.json)
+       cpu_value=$(echo "$task_def_json" | jq -r '.containerDefinitions[0].cpu')
+       memory_value=$(echo "$task_def_json" | jq -r '.containerDefinitions[0].memory')
 
-           # Register the task definition with corrected values
-           task_def_arn=$(aws ecs register-task-definition \
-          --family ${{ env.ECS_TASK_DEF_NAME }} \
-          --container-definitions "$task_def_json_fixed" \
-          --query 'taskDefinition.taskDefinitionArn' \
-          --output text)
-           echo "Task Definition ARN: $task_def_arn"
-           echo "::set-output name=task_def_arn::$task_def_arn"
+       # Register the task definition with extracted values
+       task_def_arn=$(aws ecs register-task-definition \
+       --family ${{ env.ECS_TASK_DEF_NAME }} \
+       --container-definitions "$task_def_json" \
+       --query 'taskDefinition.taskDefinitionArn' \
+       --output text)
+       echo "Task Definition ARN: $task_def_arn"
+       echo "Extracted CPU Value: $cpu_value"
+       echo "Extracted Memory Value: $memory_value"
+       echo "::set-output name=task_def_arn::$task_def_arn"
+       echo "::set-output name=cpu_value::$cpu_value"
+       echo "::set-output name=memory_value::$memory_value"
+
 
           
     - name: Deploy to ECS Service
