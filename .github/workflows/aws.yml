@@ -53,6 +53,10 @@ jobs:
             --task-definition $ECS_TASK_DEF_NAME \
             --query 'taskDefinition' \
             --output json > task-def.json
+             # Correct the CPU and Memory values in the task definition JSON
+             jq '.containerDefinitions[0].cpu = 256 | .containerDefinitions[0].memory = 512' task-def.json > corrected-task-def.json
+             # Replace the original file with the corrected one
+             mv corrected-task-def.json task-def.json
 
     - name: Print Task Definition Contents
       run: |
