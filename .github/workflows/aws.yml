@@ -54,6 +54,11 @@ jobs:
             --query 'taskDefinition' \
             --output json > task-def.json
 
+    - name: Print Task Definition Contents
+      run: |
+         cat task-def.json
+
+
     - name: Update ECS Task Definition
       id: update-task-def
       run: |
