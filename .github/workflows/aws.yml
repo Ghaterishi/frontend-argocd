@@ -3,11 +3,13 @@
   push:
     branches: [ "main" ]
  env:
-  AWS_REGION: us-east-1                       # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: sneaky-fit-frontend               # set this to your Amazon ECR repository name
+  AWS_REGION: us-east-1                      
+  ECR_REPOSITORY: sneaky-fit-frontend              
   ECS_SERVICE_NAME: sneaky-fit-frontend-service              
-  ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster                    # set this to your Amazon ECS cluster name
-  ECS_TASK_DEF_NAME: sneaky-fit-frontend-td      # set this to the path to your Amazon ECS task definition                                                                                       
+  ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster                    
+  ECS_TASK_DEF_NAME: sneaky-fit-frontend-td                          
+  CONTAINER_NAME: nginx       
+  
  permissions:
   contents: read
  jobs:
