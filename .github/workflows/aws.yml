@@ -50,7 +50,7 @@ jobs:
     - name: Fetch ECS Task Definition
       run: |
           aws ecs describe-task-definition \
-            --task-definition ${{ env.ECS_TASK_DEF_NAME }} \
+            --task-definition $ECS_TASK_DEF_NAME \
             --query 'taskDefinition' \
             --output json > task-def.json
 
