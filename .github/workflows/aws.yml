@@ -7,8 +7,7 @@
   ECR_REPOSITORY: sneaky-fit-frontend               # set this to your Amazon ECR repository name
   ECS_SERVICE_NAME: sneaky-fit-frontend-service              
   ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster                    # set this to your Amazon ECS cluster name
-  ECS_TASK_DEF_NAME: sneaky-fit-frontend-td
-  CONTAINER_NAME: snekay-fit-frontend-image       # set this to the path to your Amazon ECS task definition                                                                                       
+  ECS_TASK_DEF_NAME: sneaky-fit-frontend-td      # set this to the path to your Amazon ECS task definition                                                                                       
  permissions:
   contents: read
  jobs:
