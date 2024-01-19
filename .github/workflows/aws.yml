@@ -3,7 +3,8 @@
   push:
     branches: [ "main" ]
  env:
-  AWS_REGION: us-east-1                      
+  AWS_REGION: us-east-1   
+  AWS_ACCOUNT_ID: 581628381182
   ECR_REPOSITORY: sneaky-fit-frontend              
   ECS_SERVICE_NAME: sneaky-fit-frontend-service              
   ECS_CLUSTER_NAME: sneaky-fit-frontend-cluster                    
@@ -61,7 +62,7 @@
       with:
         task-definition: task-def.json
         container-name: sneaky-fit
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/sneaky-fit-frontend:${{ github.sha }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
