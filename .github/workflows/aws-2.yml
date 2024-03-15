@@ -1,0 +1,31 @@
+name: Deploy to AWS ECS
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Apply Terraform
+      run: |
+        terraform init
+        terraform apply -auto-approve
+
+    - name: Fetch task-def.json URL from Terraform output
+      id: fetch-task-def
+      run: |
+        TASK_DEF_URL=$(terraform output -json task_def_url | jq -r '.value')
+        echo "::set-output name=task_def_url::$TASK_DEF_URL"
+
+    - name: Fetch task-def.json
+      run: |
+        curl -o task-def.json $TASK_DEF_URL
+
+    - name: Deploy to AWS ECS
+      run: |
+        # Your deployment steps using the fetched task-def.json
