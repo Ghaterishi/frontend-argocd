@@ -23,7 +23,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 -t rishi93rich/argocd-helm:${{ steps.git_sha.outputs.sha }} .
-          docker push yourusername/imagename:${{ steps.git_sha.outputs.sha }}
+          docker push rishi93rich/argocd-helm:${{ steps.git_sha.outputs.sha }}
 
       - name: Install Helm
         uses: azure/setup-helm@v1
