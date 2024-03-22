@@ -8,7 +8,7 @@ image:
   repository: rishi93rich/frontend-3
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets:
   - name: docker-hub-secret
