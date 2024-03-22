@@ -1,11 +1,11 @@
-# Default values for custom-chart.
+# Default values for frontend-chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: rishi93rich/frontend
+  repository: rishi93rich/frontend-3
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
