@@ -44,7 +44,7 @@ jobs:
       - name: Commit and Push Changes
         run: |
           git config --local user.email "rushikeshghate6021@gamil.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.name "Ghaterishi"
           git add .
           git commit -m "Update Helm chart with new Docker image tag"
           git push origin main
