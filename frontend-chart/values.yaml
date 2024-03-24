@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: rishi93rich/frontend-3
+  repository: rishi93rich/argocd-helm
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
