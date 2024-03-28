@@ -8,7 +8,7 @@ image:
   repository: rishi93rich/argocd-helm
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "4425282"
 
 imagePullSecrets:
   - name: docker-hub-secret
