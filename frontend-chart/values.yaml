@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: rishi93rich/argocd-helm
+  repository: rishi93rich/storeapp
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "4425282"
+  tag: "v2"
 
 imagePullSecrets:
   - name: docker-hub-secret
